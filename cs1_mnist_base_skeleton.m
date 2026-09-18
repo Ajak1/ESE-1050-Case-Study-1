@@ -27,7 +27,7 @@ train=train(:,1:784);
 train(:,785)=zeros(1500,1);
 
 % testing set (200 images with 11 outliers)
-test=csvread('mnist_test_200_woutliers.csv');
+test=csvread('mnist_test_200.csv');
 % store the correct test labels
 correctlabels = test(:,785);
 test=test(:,1:784);
@@ -62,8 +62,8 @@ imagesc(testimage'); % this command plots an array as an image.  Type 'help imag
 
 %% This next section of code calls the three functions you are asked to specify
 
-k= ; % set k
-max_iter= ; % set the number of iterations of the algorithm
+k=20; % set k
+max_iter=100 ; % set the number of iterations of the algorithm
 
 %% The next line initializes the centroids.  Look at the initialize_centroids()
 % function, which is specified further down this file.
@@ -75,10 +75,17 @@ centroids=initialize_centroids(train,k);
 cost_iteration = zeros(max_iter, 1);
 
 %% This for-loop enacts the k-means algorithm
-
 for iter=1:max_iter
-    
-      % FILL THIS IN!
+  
+    for n = 1:size(train,1)
+
+        [clusteridx, clusterdistance] = assign_vector_to_centroid(train(n,:), centroids);
+
+        train(n,785) = clusteridx;
+        cost_iteration(iter) = cost_iteration(iter) + clusterdistance^2;
+
+    end
+    centroids = update_Centroids(train,20);
     
 end
 
@@ -131,7 +138,9 @@ end
 
 function [index, vec_distance] = assign_vector_to_centroid(data,centroids)
 
-% FILL THIS IN
+differences = centroids(:,1:784) - data(1:784);
+distances = sqrt(sum((differences.^2),2)); 
+[vec_distance,index] = min(distances);
 
 end
 
@@ -141,8 +150,18 @@ end
 % It returns a new set of centroids based on the current assignment of the
 % training images.
 
+%for i=1:k
+%cluster = train(train(:,785) == i, 1:784);
+%cluster_mean = mean(cluster);
+%end
+
 function new_centroids=update_Centroids(data,K)
 
-% FILL THIS IN
+    for i=1:20
+        %cluster = data(data(:,785) == i, 1:784);  
+        %cluster_mean = mean(cluster); 
+        new_centroids(i,:) = mean(data(data(:,785) == i, 1:784), 1);
+       
+    end
 
 end
