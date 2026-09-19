@@ -62,8 +62,8 @@ imagesc(testimage'); % this command plots an array as an image.  Type 'help imag
 
 %% This next section of code calls the three functions you are asked to specify
 
-k=20; % set k
-max_iter=100 ; % set the number of iterations of the algorithm
+k=12; % set k
+max_iter=150 ; % set the number of iterations of the algorithm
 
 %% The next line initializes the centroids.  Look at the initialize_centroids()
 % function, which is specified further down this file.
@@ -80,21 +80,25 @@ for iter=1:max_iter
     for n = 1:size(train,1)
 
         [clusteridx, clusterdistance] = assign_vector_to_centroid(train(n,:), centroids);
-
         train(n,785) = clusteridx;
+
         cost_iteration(iter) = cost_iteration(iter) + clusterdistance^2;
 
     end
-    centroids = update_Centroids(train,20);
+    centroids = update_Centroids(train,k);
     
 end
 
 %% This section of code plots the k-means cost as a function of the number
 % of iterations
-
 figure;
-% FILL THIS IN!
+cost_iteration = (1/1500)*cost_iteration; %normalize costs
+plot(1:max_iter, cost_iteration,'linewidth',1.5);;
 
+xlabel('Iterations');
+ylabel('K-means Cost');
+title('K-means Cost vs. Number of Iterations');
+grid on;
 
 %% This next section of code will make a plot of all of the centroids
 % Again, use help <functionname> to learn about the different functions
@@ -157,7 +161,7 @@ end
 
 function new_centroids=update_Centroids(data,K)
 
-    for i=1:20
+    for i=1:K
         %cluster = data(data(:,785) == i, 1:784);  
         %cluster_mean = mean(cluster); 
         new_centroids(i,:) = mean(data(data(:,785) == i, 1:784), 1);
@@ -165,3 +169,14 @@ function new_centroids=update_Centroids(data,K)
     end
 
 end
+
+
+%centroid labels
+centroid_labels = zeros(k,1); %kx1 vector to store labels for each centroid
+for i = 1:k
+    clusterlabels = trainsetlabels(train(:,785)==i,:); %take labels of all training images assigned to centroid i
+    centroid_labels(i) = mode(clusterlabels); %assign of the most common label to centroid i
+end
+
+%save centroids, centroid labels to .mat file.
+save('classifierdata.mat', 'centroids', 'centroid_labels');
