@@ -62,7 +62,7 @@ imagesc(testimage'); % this command plots an array as an image.  Type 'help imag
 
 %% This next section of code calls the three functions you are asked to specify
 
-k=12; % set k
+k=22; % set k
 max_iter=150 ; % set the number of iterations of the algorithm
 
 %% The next line initializes the centroids.  Look at the initialize_centroids()
@@ -82,7 +82,7 @@ for iter=1:max_iter
         [clusteridx, clusterdistance] = assign_vector_to_centroid(train(n,:), centroids);
         train(n,785) = clusteridx;
 
-        cost_iteration(iter) = cost_iteration(iter) + clusterdistance^2;
+        cost_iteration(iter) = cost_iteration(iter) + clusterdistance^2; %
 
     end
     centroids = update_Centroids(train,k);
@@ -93,7 +93,7 @@ end
 % of iterations
 figure;
 cost_iteration = (1/1500)*cost_iteration; %normalize costs
-plot(1:max_iter, cost_iteration,'linewidth',1.5);;
+plot(1:max_iter, cost_iteration,'linewidth',1.5);
 
 xlabel('Iterations');
 ylabel('K-means Cost');
@@ -142,8 +142,8 @@ end
 
 function [index, vec_distance] = assign_vector_to_centroid(data,centroids)
 
-differences = centroids(:,1:784) - data(1:784);
-distances = sqrt(sum((differences.^2),2)); 
+differences = centroids(:,1:784) - data(1:784); %
+distances = sqrt(sum((differences.^2),2));  %euclidean distance/norm
 [vec_distance,index] = min(distances);
 
 end
@@ -154,18 +154,11 @@ end
 % It returns a new set of centroids based on the current assignment of the
 % training images.
 
-%for i=1:k
-%cluster = train(train(:,785) == i, 1:784);
-%cluster_mean = mean(cluster);
-%end
 
 function new_centroids=update_Centroids(data,K)
 
     for i=1:K
-        %cluster = data(data(:,785) == i, 1:784);  
-        %cluster_mean = mean(cluster); 
         new_centroids(i,:) = mean(data(data(:,785) == i, 1:784), 1);
-       
     end
 
 end
